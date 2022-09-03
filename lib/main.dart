@@ -1,115 +1,71 @@
+/* 演習1 */
+/* 以下のコードを実行するとエラーが発生します。コードを追記し、エラーが発生しないようにしましょう。 */
+
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(MyApp()); // 引数のWidgetが画面いっぱいに表示される
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+List<String> generateHello({int? start, int? n}) {
+  var _hs = <String>[];
+  for (int i = start!; i < start + n!; i++) {
+    _hs.add("Hello!" + i.toString());
   }
+  return _hs;
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+// 状態を管理するクラスは、Stateクラスを継承
+class RandomWordsState extends State<RandomWords> {
+  Widget _buildSuggestions() {
+    final _words = <String>[]; // 単語のペアを格納するリスト
+    return ListView.builder(itemBuilder: (context, i) {
+      // itemBuilderで一行ごとに処理が呼ばれる
+      if (i.isOdd) return Divider(); // 奇数行には水平線を表示
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      final index = i ~/ 2; // ~/は結果が整数の割り算
+      if (index >= _words.length) {
+        // 行数がリストの要素数を越えれば
+        _words.addAll(generateHello(start: index, n: 10)); // 単語のペアを10個追加
+      }
+      // return _buildRow(_words[index]);
+      return _buildRow('TESTING${i}');
     });
   }
 
+  // 単語のペアから、形式を整えた行のWidgetを作るメソッド
+  Widget _buildRow(String word) {
+    return ListTile(
+      title: Text(
+        word,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text("Live!人工知能"),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      body: _buildSuggestions(),
     );
+  }
+}
+
+// StatefulなWidgetのクラスは、StatefulWidgetを継承
+class RandomWords extends StatefulWidget {
+  @override
+  RandomWordsState createState() => RandomWordsState();
+}
+
+// 最初に表示するWidgetのクラス
+class MyApp extends StatelessWidget {
+  // StatelessWidgetを継承
+  @override
+  Widget build(BuildContext context) {
+    //buildメソッドでUIを作成
+    return MaterialApp(
+        // マテリアルデザインのアプリ
+        title: "My Simple App", // アプリのタイトル
+        home: RandomWords());
   }
 }
