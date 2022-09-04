@@ -1,71 +1,93 @@
-/* 演習1 */
-/* 以下のコードを実行するとエラーが発生します。コードを追記し、エラーが発生しないようにしましょう。 */
+/* 4-1. 画面遷移 */
 
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp()); // 引数のWidgetが画面いっぱいに表示される
+void main() => runApp(MyApp());
 
-List<String> generateHello({int? start, int? n}) {
-  var _hs = <String>[];
-  for (int i = start!; i < start + n!; i++) {
-    _hs.add("Hello!" + i.toString());
-  }
-  return _hs;
-}
-
-// 状態を管理するクラスは、Stateクラスを継承
-class RandomWordsState extends State<RandomWords> {
-  Widget _buildSuggestions() {
-    final _words = <String>[]; // 単語のペアを格納するリスト
-    return ListView.builder(itemBuilder: (context, i) {
-      // itemBuilderで一行ごとに処理が呼ばれる
-      if (i.isOdd) return Divider(); // 奇数行には水平線を表示
-
-      final index = i ~/ 2; // ~/は結果が整数の割り算
-      if (index >= _words.length) {
-        // 行数がリストの要素数を越えれば
-        _words.addAll(generateHello(start: index, n: 10)); // 単語のペアを10個追加
-      }
-      // return _buildRow(_words[index]);
-      return _buildRow('TESTING${i}');
-    });
-  }
-
-  // 単語のペアから、形式を整えた行のWidgetを作るメソッド
-  Widget _buildRow(String word) {
-    return ListTile(
-      title: Text(
-        word,
-      ),
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: MainPage(),
+      routes: <String, WidgetBuilder>{
+        '/home': (BuildContext context) => MainPage(), // 最初のページ
+        '/subpage': (BuildContext context) => SubPage(),
+        '/subpage2': (BuildContext context) => SubPage2() // 次のページ
+        // 次のページ
+      },
     );
   }
+}
 
+class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Live!人工知能"),
+        title: Text("Mainページ"),
       ),
-      body: _buildSuggestions(),
+      body: Container(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text("Main"),
+              ElevatedButton(
+                // 立体的なボタン
+                onPressed: () =>
+                    Navigator.of(context).pushNamed("/subpage"), // 次の画面を乗せる
+                child: Text("Subページへ"),
+              )
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
 
-// StatefulなWidgetのクラスは、StatefulWidgetを継承
-class RandomWords extends StatefulWidget {
-  @override
-  RandomWordsState createState() => RandomWordsState();
-}
-
-// 最初に表示するWidgetのクラス
-class MyApp extends StatelessWidget {
-  // StatelessWidgetを継承
+class SubPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    //buildメソッドでUIを作成
-    return MaterialApp(
-        // マテリアルデザインのアプリ
-        title: "My Simple App", // アプリのタイトル
-        home: RandomWords());
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Subページ"),
+      ),
+      body: Container(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text("Main"),
+              ElevatedButton(
+                // 立体的なボタン
+                onPressed: () =>
+                    Navigator.of(context).pushNamed("/subpage2"), // 次の画面を乗せる
+                child: Text("Subページ2へ"),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SubPage2 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Subページ2"),
+      ),
+      body: Container(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[Text("Sub2")],
+          ),
+        ),
+      ),
+    );
   }
 }
